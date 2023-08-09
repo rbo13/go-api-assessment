@@ -37,6 +37,22 @@ func main() {
 			return c.JSON(http.StatusBadRequest, err)
 		}
 
+		// teacherRepo := mysql.NewTeacherRepository(conn)
+		// teacherSrvc := service.NewTeacher(teacherRepo)
+
+		// newTeacher := domain.Teacher{
+		// 	Email: payload.Teacher,
+		// }
+
+		// currentTeacher, err := teacherSrvc.RetrieveTeacherByEmail(c.Request().Context(), newTeacher.Email)
+		// if err != nil {
+		// 	return c.JSON(http.StatusBadRequest, err)
+		// }
+
+		// if err := teacherSrvc.AddTeacher(c.Request().Context(), newTeacher); err != nil {
+		// 	return c.JSON(http.StatusBadRequest, err)
+		// }
+
 		return c.JSON(http.StatusNoContent, payload)
 	})
 

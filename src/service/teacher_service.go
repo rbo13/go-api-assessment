@@ -9,6 +9,7 @@ import (
 
 type TeacherService interface {
 	AddTeacher(context.Context, domain.Teacher) error
+	RetrieveTeacherByEmail(context.Context, string) (domain.Teacher, error)
 }
 
 type teacherService struct {
@@ -22,4 +23,9 @@ func NewTeacher(repo repository.TeacherRepository) TeacherService {
 // AddTeacher implements TeacherService.
 func (ts *teacherService) AddTeacher(ctx context.Context, teacher domain.Teacher) error {
 	return ts.teacherRepository.Save(ctx, teacher)
+}
+
+// RetrieveTeacherByEmail implements TeacherService.
+func (ts *teacherService) RetrieveTeacherByEmail(ctx context.Context, email string) (domain.Teacher, error) {
+	return ts.teacherRepository.FindByEmail(ctx, email)
 }

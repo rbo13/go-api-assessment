@@ -2,6 +2,16 @@
 INSERT INTO students (student_email, suspended)
 VALUES (?, ?);
 
+-- name: GetStudentById :one
+SELECT * FROM students
+WHERE id = ?
+LIMIT 1;
+
+-- name: GetStudentByEmail :one
+SELECT * FROM students
+WHERE student_email = ?
+LIMIT 1;
+
 -- name: GetStudentsByTeacherEmail :one
 SELECT JSON_OBJECT(
   'teacher', t.email,

@@ -22,8 +22,11 @@ func NewTeacherRepository(db *sql.DB) *MySQLTeacherRepository {
 
 func (repo *MySQLTeacherRepository) Save(ctx context.Context, teacher domain.Teacher) error {
 	_, err := repo.queries.CreateTeacher(ctx, database.CreateTeacherParams{
-		TeacherName: teacher.TeacherName,
-		Email:       teacher.Email,
+		TeacherName: sql.NullString{
+			String: teacher.TeacherName,
+			Valid:  true,
+		},
+		Email: teacher.Email,
 	})
 
 	return err

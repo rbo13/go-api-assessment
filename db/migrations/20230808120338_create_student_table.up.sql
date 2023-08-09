@@ -5,4 +5,4 @@ CREATE TABLE IF NOT EXISTS students (
   suspended BOOLEAN NOT NULL DEFAULT false
 );
 
-CREATE INDEX idx_student_name ON students(student_name);
+CREATE INDEX idx_student_name ON students(student_email);

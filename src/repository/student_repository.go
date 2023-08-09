@@ -8,4 +8,5 @@ import (
 
 type StudentRepository interface {
 	Save(context.Context, domain.Student) error
+	FindByEmail(context.Context, string) (domain.Student, error)
 }
