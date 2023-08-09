@@ -32,14 +32,26 @@ func (repo *MySQLTeacherRepository) Save(ctx context.Context, teacher domain.Tea
 	return err
 }
 
-func (repo *MySQLTeacherRepository) FindById(context.Context, int32) (domain.Teacher, error) {
+func (repo *MySQLTeacherRepository) FindById(ctx context.Context, id int32) (domain.Teacher, error) {
 	return domain.Teacher{}, nil
 }
 
-func (repo *MySQLTeacherRepository) FindByEmail(context.Context, string) (domain.Teacher, error) {
+func (repo *MySQLTeacherRepository) FindByEmail(ctx context.Context, email string) (domain.Teacher, error) {
 	return domain.Teacher{}, nil
 }
 
-func (repo *MySQLTeacherRepository) List(context.Context) (domain.Teachers, error) {
+func (repo *MySQLTeacherRepository) FindCommonStudents(ctx context.Context, emails []string) ([]string, error) {
+	res, err := repo.queries.GetStudentsByCommonTeacher(ctx, database.GetStudentsByCommonTeacherParams{
+		Emails: emails,
+		ID:     int32(len(emails)),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (repo *MySQLTeacherRepository) List(ctx context.Context) (domain.Teachers, error) {
 	return domain.Teachers{}, nil
 }

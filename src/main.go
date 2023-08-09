@@ -16,6 +16,10 @@ type registerPayload struct {
 	Students []string `json:"students"`
 }
 
+type commonStudentsReponse struct {
+	Students []string `json:"students"`
+}
+
 func main() {
 	ctx := context.Background()
 
@@ -30,6 +34,13 @@ func main() {
 	defer conn.Close()
 
 	e := echo.New()
+
+	e.GET("/api/commonstudents", func(c echo.Context) error {
+		json := map[string]interface{}{}
+
+		json["students"] = ""
+		return c.JSON(http.StatusOK, json)
+	})
 
 	e.POST("/api/register", func(c echo.Context) error {
 		var payload registerPayload

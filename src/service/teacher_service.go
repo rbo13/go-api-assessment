@@ -10,6 +10,7 @@ import (
 type TeacherService interface {
 	AddTeacher(context.Context, domain.Teacher) error
 	RetrieveTeacherByEmail(context.Context, string) (domain.Teacher, error)
+	RetrieveCommonStudents(context.Context, []string) ([]string, error)
 }
 
 type teacherService struct {
@@ -28,4 +29,8 @@ func (ts *teacherService) AddTeacher(ctx context.Context, teacher domain.Teacher
 // RetrieveTeacherByEmail implements TeacherService.
 func (ts *teacherService) RetrieveTeacherByEmail(ctx context.Context, email string) (domain.Teacher, error) {
 	return ts.teacherRepository.FindByEmail(ctx, email)
+}
+
+func (ts *teacherService) RetrieveCommonStudents(ctx context.Context, emails []string) ([]string, error) {
+	return ts.teacherRepository.FindCommonStudents(ctx, emails)
 }

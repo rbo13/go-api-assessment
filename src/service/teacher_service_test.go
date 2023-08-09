@@ -25,6 +25,11 @@ func (m *MockTeacherRepository) FindById(context.Context, int32) (domain.Teacher
 	panic("unimplemented")
 }
 
+func (m *MockTeacherRepository) FindCommonStudents(ctx context.Context, emails []string) ([]string, error) {
+	args := m.Called(ctx, emails)
+	return args.Get(0).([]string), args.Error(1)
+}
+
 // List implements repository.TeacherRepository.
 func (m *MockTeacherRepository) List(context.Context) (domain.Teachers, error) {
 	panic("unimplemented")
@@ -52,6 +57,29 @@ func TestTeacherService_AddTeacher(t *testing.T) {
 
 	err := teacherService.AddTeacher(ctx, teacher)
 	assert.NoError(t, err)
+
+	// Verify that the mock repository methods were called as expected
+	mockRepo.AssertExpectations(t)
+}
+
+func TestTeacherService_GetCommonStudents(t *testing.T) {
+	ctx := context.Background()
+
+	mockRepo := &MockTeacherRepository{}
+	teacherService := service.NewTeacher(mockRepo)
+
+	emails := []string{"teacherken@gmail.com"}
+	commonStudents := []string{
+		"studenthon@gmail.com",
+		"studentjon@gmail.com",
+	}
+
+	mockRepo.On("FindCommonStudents", ctx, mock.Anything).Return(commonStudents, nil)
+
+	students, err := teacherService.RetrieveCommonStudents(ctx, emails)
+	t.Log("Email Results: ", emails)
+	assert.NoError(t, err)
+	assert.Equal(t, commonStudents, students)
 
 	// Verify that the mock repository methods were called as expected
 	mockRepo.AssertExpectations(t)
