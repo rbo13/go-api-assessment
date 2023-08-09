@@ -20,13 +20,23 @@ func NewStudentRepository(db *sql.DB) *MySQLStudentRepository {
 	}
 }
 
-func (repo *MySQLStudentRepository) Save(ctx context.Context, student domain.Student) error {
-	_, err := repo.queries.CreateStudent(ctx, database.CreateStudentParams{
+func (repo *MySQLStudentRepository) Save(ctx context.Context, student domain.Student) (domain.Student, error) {
+	res, err := repo.queries.CreateStudent(ctx, database.CreateStudentParams{
 		StudentEmail: student.StudentEmail,
 		Suspended:    student.Suspended,
 	})
+	if err != nil {
+		return domain.Student{}, err
+	}
 
-	return err
+	lastInsertedId, err := res.LastInsertId()
+	if err != nil {
+		return domain.Student{}, err
+	}
+
+	return domain.Student{
+		ID: int32(lastInsertedId),
+	}, nil
 }
 
 func (repo *MySQLStudentRepository) FindByEmail(ctx context.Context, email string) (domain.Student, error) {

@@ -25,7 +25,8 @@ func TestMySQLStudentRepository(t *testing.T) {
 			Suspended:    false,
 		}
 		mock.ExpectExec("INSERT INTO students").WillReturnResult(sqlmock.NewResult(1, 1))
-		err := repo.Save(ctx, mockStudent)
+		res, err := repo.Save(ctx, mockStudent)
+		assert.NotZero(t, res.ID)
 		assert.NoError(t, err)
 	})
 }

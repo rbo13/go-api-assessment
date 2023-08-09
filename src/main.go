@@ -7,6 +7,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/rbo13/go-api-assessment/src/db"
+	"github.com/rbo13/go-api-assessment/src/domain"
+	"github.com/rbo13/go-api-assessment/src/repository/mysql"
+	"github.com/rbo13/go-api-assessment/src/service"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -16,9 +19,14 @@ type registerPayload struct {
 	Students []string `json:"students"`
 }
 
-type commonStudentsReponse struct {
-	Students []string `json:"students"`
+type teacherPayload struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
 }
+
+// type commonStudentsReponse struct {
+// 	Students []string `json:"students"`
+// }
 
 func main() {
 	ctx := context.Background()
@@ -38,8 +46,41 @@ func main() {
 	e.GET("/api/commonstudents", func(c echo.Context) error {
 		json := map[string]interface{}{}
 
-		json["students"] = ""
+		teacherRepo := mysql.NewTeacherRepository(conn)
+		teacherSrvc := service.NewTeacher(teacherRepo)
+
+		queryParam := c.QueryParam("teacher")
+
+		emails := []string{"teacherken@gmail.com"}
+		res, err := teacherSrvc.RetrieveCommonStudents(c.Request().Context(), emails)
+		if err != nil {
+			return c.JSON(http.StatusNotFound, err)
+		}
+
+		json["students"] = res
+		json["teacher"] = queryParam
 		return c.JSON(http.StatusOK, json)
+	})
+
+	e.POST("/api/teachers", func(c echo.Context) error {
+		var payload teacherPayload
+		if err := c.Bind(&payload); err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+
+		teacherRepo := mysql.NewTeacherRepository(conn)
+		teacherSrvc := service.NewTeacher(teacherRepo)
+
+		teacher := domain.Teacher{
+			TeacherName: payload.Name,
+			Email:       payload.Email,
+		}
+
+		if err := teacherSrvc.AddTeacher(c.Request().Context(), teacher); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		return c.JSON(http.StatusCreated, teacher)
 	})
 
 	e.POST("/api/register", func(c echo.Context) error {
@@ -48,23 +89,42 @@ func main() {
 			return c.JSON(http.StatusBadRequest, err)
 		}
 
-		// teacherRepo := mysql.NewTeacherRepository(conn)
-		// teacherSrvc := service.NewTeacher(teacherRepo)
+		teacherRepo := mysql.NewTeacherRepository(conn)
+		teacherSrvc := service.NewTeacher(teacherRepo)
 
-		// newTeacher := domain.Teacher{
-		// 	Email: payload.Teacher,
-		// }
+		studentRepo := mysql.NewStudentRepository(conn)
+		studentSrvc := service.NewStudent(studentRepo)
 
-		// currentTeacher, err := teacherSrvc.RetrieveTeacherByEmail(c.Request().Context(), newTeacher.Email)
-		// if err != nil {
-		// 	return c.JSON(http.StatusBadRequest, err)
-		// }
+		registrationRepo := mysql.NewRegistrationRepository(conn)
+		registrationSrvc := service.NewRegistration(registrationRepo)
 
-		// if err := teacherSrvc.AddTeacher(c.Request().Context(), newTeacher); err != nil {
-		// 	return c.JSON(http.StatusBadRequest, err)
-		// }
+		// if the teacher, does not exist
+		// they should not be able to add
+		currentTeacher, err := teacherSrvc.RetrieveTeacherByEmail(c.Request().Context(), payload.Teacher)
+		if err != nil {
+			return c.JSON(http.StatusNotFound, "Teacher does not exist, please create!")
+		}
 
-		return c.JSON(http.StatusNoContent, payload)
+		for _, student := range payload.Students {
+			s := domain.Student{
+				StudentEmail: student,
+				Suspended:    false,
+			}
+
+			insertedStudent, err := studentSrvc.AddStudent(c.Request().Context(), s)
+			if err != nil {
+				continue
+			}
+
+			if err := registrationSrvc.AddRegistration(c.Request().Context(), domain.Registration{
+				TeacherID: currentTeacher.ID,
+				StudentID: insertedStudent.ID,
+			}); err != nil {
+				continue
+			}
+		}
+
+		return c.JSON(http.StatusOK, payload)
 	})
 
 	e.Logger.Fatal(e.Start(":3000"))

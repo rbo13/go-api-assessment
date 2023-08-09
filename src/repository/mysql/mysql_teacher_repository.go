@@ -33,11 +33,29 @@ func (repo *MySQLTeacherRepository) Save(ctx context.Context, teacher domain.Tea
 }
 
 func (repo *MySQLTeacherRepository) FindById(ctx context.Context, id int32) (domain.Teacher, error) {
-	return domain.Teacher{}, nil
+	res, err := repo.queries.GetTeacher(ctx, id)
+	if err != nil {
+		return domain.Teacher{}, err
+	}
+
+	return domain.Teacher{
+		ID:          res.ID,
+		TeacherName: res.TeacherName.String,
+		Email:       res.Email,
+	}, nil
 }
 
 func (repo *MySQLTeacherRepository) FindByEmail(ctx context.Context, email string) (domain.Teacher, error) {
-	return domain.Teacher{}, nil
+	res, err := repo.queries.GetTeacherByEmail(ctx, email)
+	if err != nil {
+		return domain.Teacher{}, err
+	}
+
+	return domain.Teacher{
+		ID:          res.ID,
+		TeacherName: res.TeacherName.String,
+		Email:       res.Email,
+	}, nil
 }
 
 func (repo *MySQLTeacherRepository) FindCommonStudents(ctx context.Context, emails []string) ([]string, error) {
@@ -53,5 +71,22 @@ func (repo *MySQLTeacherRepository) FindCommonStudents(ctx context.Context, emai
 }
 
 func (repo *MySQLTeacherRepository) List(ctx context.Context) (domain.Teachers, error) {
-	return domain.Teachers{}, nil
+	list, err := repo.queries.ListTeachers(ctx)
+	if err != nil {
+		return domain.Teachers{}, err
+	}
+
+	teachers := domain.Teachers{}
+
+	for _, l := range list {
+		t := domain.Teacher{
+			ID:          l.ID,
+			TeacherName: l.TeacherName.String,
+			Email:       l.Email,
+		}
+
+		teachers = append(teachers, t)
+	}
+
+	return teachers, nil
 }

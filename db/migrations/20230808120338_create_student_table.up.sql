@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS students (
   id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   student_name VARCHAR(100),
-  student_email VARCHAR(150) NOT NULL,
+  student_email VARCHAR(150) NOT NULL UNIQUE,
   suspended BOOLEAN NOT NULL DEFAULT false
 );
 
