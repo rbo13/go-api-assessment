@@ -2,14 +2,19 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"log"
+	"net/http"
 
-	database "github.com/rbo13/go-api-assessment/generated/db"
+	"github.com/labstack/echo/v4"
 	"github.com/rbo13/go-api-assessment/src/db"
 
 	_ "github.com/go-sql-driver/mysql"
 )
+
+type registerPayload struct {
+	Teacher  string   `json:"teacher"`
+	Students []string `json:"students"`
+}
 
 func main() {
 	ctx := context.Background()
@@ -24,23 +29,16 @@ func main() {
 	}
 	defer conn.Close()
 
-	query := database.New(conn)
+	e := echo.New()
 
-	res, err := query.CreateTeacher(ctx, database.CreateTeacherParams{
-		TeacherName: sql.NullString{
-			String: "Teacher Richard",
-			Valid:  true,
-		},
-		Email: sql.NullString{
-			String: "teacherrichard@gmail.com",
-			Valid:  true,
-		},
+	e.POST("/api/register", func(c echo.Context) error {
+		var payload registerPayload
+		if err := c.Bind(&payload); err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+
+		return c.JSON(http.StatusNoContent, payload)
 	})
-	if err != nil {
-		log.Fatalf("Error inserting teacher: %v \n", err)
-	}
 
-	if res != nil {
-		log.Println("Successfully inserted! ")
-	}
+	e.Logger.Fatal(e.Start(":3000"))
 }

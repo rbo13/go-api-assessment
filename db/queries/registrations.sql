@@ -1,3 +1,3 @@
 -- name: RegisterStudent :execresult
-INSERT INTO registrations (teacherID, studentID)
+INSERT INTO registrations (teacher_id, student_id)
 VALUES (?, ?);
