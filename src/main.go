@@ -51,7 +51,7 @@ func main() {
 
 		queryParam := c.QueryParam("teacher")
 
-		emails := []string{"teacherken@gmail.com"}
+		emails := []string{queryParam}
 		res, err := teacherSrvc.RetrieveCommonStudents(c.Request().Context(), emails)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, err)
@@ -124,7 +124,7 @@ func main() {
 			}
 		}
 
-		return c.JSON(http.StatusOK, payload)
+		return c.JSON(http.StatusNoContent, nil)
 	})
 
 	e.Logger.Fatal(e.Start(":3000"))
