@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"regexp"
 
 	"github.com/labstack/echo/v4"
 	"github.com/rbo13/go-api-assessment/src/db"
@@ -26,6 +27,11 @@ type teacherPayload struct {
 
 type suspendStudentPayload struct {
 	Student string `json:"student"`
+}
+
+type sendNotificationPayload struct {
+	Teacher      string `json:"teacher"`
+	Notification string `json:"notification"`
 }
 
 func main() {
@@ -157,5 +163,45 @@ func main() {
 		return c.JSON(http.StatusNoContent, nil)
 	})
 
+	e.POST("/api/retrievefornotifications", func(c echo.Context) error {
+		json := map[string]interface{}{}
+
+		var payload sendNotificationPayload
+		if err := c.Bind(&payload); err != nil {
+			json["message"] = err.Error()
+			return c.JSON(http.StatusUnprocessableEntity, json)
+		}
+
+		emails := extractMentionedEmails(payload.Notification)
+
+		studentRepo := mysql.NewStudentRepository(conn)
+		studentSrvc := service.NewStudent(studentRepo)
+
+		recipients, err := studentSrvc.FindMentionedStudentsByTeacher(c.Request().Context(), payload.Teacher, emails)
+		if err != nil {
+			return c.JSON(http.StatusNotFound, err.Error())
+		}
+
+		json["recepients"] = recipients
+		return c.JSON(http.StatusOK, json)
+	})
+
 	e.Logger.Fatal(e.Start(":3000"))
+}
+
+func extractMentionedEmails(text string) []string {
+	var emails []string
+
+	re, err := regexp.Compile(`@([^\s]+)`)
+	if err != nil {
+		return emails
+	}
+
+	matches := re.FindAllStringSubmatch(text, -1)
+	for _, match := range matches {
+		if len(match) > 1 {
+			emails = append(emails, match[1])
+		}
+	}
+	return emails
 }
