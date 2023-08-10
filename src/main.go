@@ -49,16 +49,19 @@ func main() {
 		teacherRepo := mysql.NewTeacherRepository(conn)
 		teacherSrvc := service.NewTeacher(teacherRepo)
 
-		queryParam := c.QueryParam("teacher")
+		params := c.QueryParams()["teacher"]
+		if params == nil {
+			json["message"] = "Please add a query parameters"
+			return c.JSON(http.StatusBadRequest, json)
+		}
 
-		emails := []string{queryParam}
-		res, err := teacherSrvc.RetrieveCommonStudents(c.Request().Context(), emails)
+		res, err := teacherSrvc.RetrieveCommonStudents(c.Request().Context(), params)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, err)
 		}
 
 		json["students"] = res
-		json["teacher"] = queryParam
+
 		return c.JSON(http.StatusOK, json)
 	})
 
@@ -106,21 +109,32 @@ func main() {
 		}
 
 		for _, student := range payload.Students {
+
 			s := domain.Student{
 				StudentEmail: student,
 				Suspended:    false,
 			}
 
-			insertedStudent, err := studentSrvc.AddStudent(c.Request().Context(), s)
-			if err != nil {
-				continue
-			}
+			currStudent, _ := studentSrvc.FindStudentByEmail(c.Request().Context(), s.StudentEmail)
+			if currStudent.ID == 0 {
+				newStudent, err := studentSrvc.AddStudent(c.Request().Context(), s)
+				if err != nil {
+					continue
+				}
 
-			if err := registrationSrvc.AddRegistration(c.Request().Context(), domain.Registration{
-				TeacherID: currentTeacher.ID,
-				StudentID: insertedStudent.ID,
-			}); err != nil {
-				continue
+				if err := registrationSrvc.AddRegistration(c.Request().Context(), domain.Registration{
+					TeacherID: currentTeacher.ID,
+					StudentID: newStudent.ID,
+				}); err != nil {
+					continue
+				}
+			} else {
+				if err := registrationSrvc.AddRegistration(c.Request().Context(), domain.Registration{
+					TeacherID: currentTeacher.ID,
+					StudentID: currStudent.ID,
+				}); err != nil {
+					continue
+				}
 			}
 		}
 

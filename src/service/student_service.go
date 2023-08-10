@@ -9,6 +9,7 @@ import (
 
 type StudentService interface {
 	AddStudent(context.Context, domain.Student) (domain.Student, error)
+	FindStudentByEmail(context.Context, string) (domain.Student, error)
 }
 
 type studentService struct {
@@ -22,4 +23,9 @@ func NewStudent(repo repository.StudentRepository) StudentService {
 // AddStudent implements StudentService.
 func (ss *studentService) AddStudent(ctx context.Context, student domain.Student) (domain.Student, error) {
 	return ss.studentRepository.Save(ctx, student)
+}
+
+// FindStudentByEmail implements StudentService.
+func (ss *studentService) FindStudentByEmail(ctx context.Context, email string) (domain.Student, error) {
+	return ss.studentRepository.FindByEmail(ctx, email)
 }
