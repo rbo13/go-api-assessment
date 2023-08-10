@@ -12,6 +12,11 @@ SELECT * FROM students
 WHERE student_email = ?
 LIMIT 1;
 
+-- name: SuspendStudent :execresult
+UPDATE students
+SET suspended = 1
+WHERE student_email = ?;
+
 -- name: GetStudentsByTeacherEmail :one
 SELECT JSON_OBJECT(
   'teacher', t.email,

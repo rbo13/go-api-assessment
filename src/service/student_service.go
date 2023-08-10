@@ -10,6 +10,7 @@ import (
 type StudentService interface {
 	AddStudent(context.Context, domain.Student) (domain.Student, error)
 	FindStudentByEmail(context.Context, string) (domain.Student, error)
+	SuspendStudent(context.Context, string) error
 }
 
 type studentService struct {
@@ -28,4 +29,8 @@ func (ss *studentService) AddStudent(ctx context.Context, student domain.Student
 // FindStudentByEmail implements StudentService.
 func (ss *studentService) FindStudentByEmail(ctx context.Context, email string) (domain.Student, error) {
 	return ss.studentRepository.FindByEmail(ctx, email)
+}
+
+func (ss *studentService) SuspendStudent(ctx context.Context, email string) error {
+	return ss.studentRepository.Suspend(ctx, email)
 }

@@ -24,9 +24,9 @@ type teacherPayload struct {
 	Name  string `json:"name"`
 }
 
-// type commonStudentsReponse struct {
-// 	Students []string `json:"students"`
-// }
+type suspendStudentPayload struct {
+	Student string `json:"student"`
+}
 
 func main() {
 	ctx := context.Background()
@@ -136,6 +136,22 @@ func main() {
 					continue
 				}
 			}
+		}
+
+		return c.JSON(http.StatusNoContent, nil)
+	})
+
+	e.POST("/api/suspend", func(c echo.Context) error {
+		var payload suspendStudentPayload
+		if err := c.Bind(&payload); err != nil {
+			return c.JSON(http.StatusUnprocessableEntity, err.Error())
+		}
+
+		studentRepo := mysql.NewStudentRepository(conn)
+		studentSrvc := service.NewStudent(studentRepo)
+
+		if err := studentSrvc.SuspendStudent(c.Request().Context(), payload.Student); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
 		return c.JSON(http.StatusNoContent, nil)

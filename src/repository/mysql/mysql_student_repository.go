@@ -51,3 +51,12 @@ func (repo *MySQLStudentRepository) FindByEmail(ctx context.Context, email strin
 		Suspended:    student.Suspended,
 	}, nil
 }
+
+func (repo *MySQLStudentRepository) Suspend(ctx context.Context, email string) error {
+	_, err := repo.queries.SuspendStudent(ctx, email)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
