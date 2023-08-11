@@ -11,7 +11,7 @@ SUB=cmd/${APP}/root.go
 MAIN=cmd/${APP}/main.go
 
 build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -installsuffix -a -tags netgo ${LDFLAGS} -o ${OUT} ${SUB} ${MAIN}
+	CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -race -installsuffix -a -tags netgo ${LDFLAGS} -o ${OUT} ${SUB} ${MAIN}
 
 migrate:
 	migrate -path db/migrations -database $(DATABASE_URL) up
