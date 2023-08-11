@@ -9,8 +9,12 @@ import (
 )
 
 func (a *api) Handlers() *echo.Echo {
-	engine := echo.New()
+	// initialize different services
+	teacherSrvc := service.NewTeacher(a.teacherRepo)
+	studentSrvc := service.NewStudent(a.studentRepo)
+	registrationSrvc := service.NewRegistration(a.registrationRepo)
 
+	engine := echo.New()
 	engine.Use(
 		middleware.Recover(),
 		middleware.Gzip(),
@@ -20,15 +24,13 @@ func (a *api) Handlers() *echo.Echo {
 		}),
 	)
 
-	teacherSrvc := service.NewTeacher(a.teacherRepo)
-	studentSrvc := service.NewStudent(a.studentRepo)
-	registrationSrvc := service.NewRegistration(a.registrationRepo)
+	api := engine.Group("/api/v1")
 
-	engine.GET(apiCommonStudents, a.getCommonStudents(teacherSrvc))
-	engine.POST(apiCreateTeacher, a.createTeacher(teacherSrvc))
-	engine.POST(apiRegisterStudent, a.registerStudent(teacherSrvc, studentSrvc, registrationSrvc))
-	engine.POST(apiSuspend, a.suspendStudent(studentSrvc))
-	engine.POST(apiRetrieveNotifications, a.retrieveForNotifications(studentSrvc))
+	api.GET(apiCommonStudents, a.getCommonStudents(teacherSrvc))
+	api.POST(apiCreateTeacher, a.createTeacher(teacherSrvc))
+	api.POST(apiRegisterStudent, a.registerStudent(teacherSrvc, studentSrvc, registrationSrvc))
+	api.POST(apiSuspend, a.suspendStudent(studentSrvc))
+	api.POST(apiRetrieveNotifications, a.retrieveForNotifications(studentSrvc))
 
 	return engine
 }
