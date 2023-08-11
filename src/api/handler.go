@@ -24,7 +24,7 @@ func (a *api) Handlers() *echo.Echo {
 		}),
 	)
 
-	api := engine.Group("/api/v1")
+	api := engine.Group(apiGroupVersion)
 
 	api.GET(apiCommonStudents, a.getCommonStudents(teacherSrvc))
 	api.POST(apiCreateTeacher, a.createTeacher(teacherSrvc))
