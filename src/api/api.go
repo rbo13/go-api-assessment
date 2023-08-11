@@ -14,21 +14,24 @@ type api struct {
 	ctx    context.Context
 	logger *logger.Log
 
-	studentRepo repository.StudentRepository
-	teacherRepo repository.TeacherRepository
+	studentRepo      repository.StudentRepository
+	teacherRepo      repository.TeacherRepository
+	registrationRepo repository.RegistrationRepository
 }
 
 func New(ctx context.Context, log *logger.Log, db *sql.DB) *api {
 	// initialize repositories
 	studentRepo := mysql.NewStudentRepository(db)
 	teacherRepo := mysql.NewTeacherRepository(db)
+	registrationRepo := mysql.NewRegistrationRepository(db)
 
 	return &api{
 		ctx:    ctx,
 		logger: log,
 
-		studentRepo: studentRepo,
-		teacherRepo: teacherRepo,
+		studentRepo:      studentRepo,
+		teacherRepo:      teacherRepo,
+		registrationRepo: registrationRepo,
 	}
 }
 
