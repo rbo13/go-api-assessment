@@ -7,9 +7,6 @@ RUN apt-get update && apt-get install -y \
   xz-utils
 ENV GO111MODULE=on
 COPY . .
-# Pull sqlc to generate db files
-RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-RUN sqlc generate
 
 RUN go mod tidy
 RUN go mod download
