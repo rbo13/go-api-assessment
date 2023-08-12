@@ -7,8 +7,14 @@ RUN apt-get update && apt-get install -y \
   xz-utils
 ENV GO111MODULE=on
 COPY . .
+# Pull sqlc to generate db files
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+RUN sqlc generate
+
 RUN go mod tidy
 RUN go mod download
+
+# build the app
 RUN make build
 
 # Stage 2: Minimize the binary using https://github.com/upx/upx
