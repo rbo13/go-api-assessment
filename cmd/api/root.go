@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	maxRetryConn = 10
+	maxRetryConn = 5
 	maxDBConn    = 16
 )
 
@@ -29,12 +29,16 @@ func execute(ctx context.Context) error {
 	logger := logger.New("api")
 	DB_URL := os.Getenv("DB_URL")
 
+	logger.Sugar().Info("DB_URL: ", DB_URL)
+
 	for i := 0; i < maxRetryConn; i++ {
 		conn, err = db.CreateNewConnection(&db.Config{
 			Ctx:      ctx,
 			MaxConns: maxDBConn,
 			DSN:      DB_URL,
 		})
+
+		logger.Sugar().Infof("DB Conn Err: %v \n", err)
 
 		if err == nil {
 			break
