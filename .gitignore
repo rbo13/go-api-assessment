@@ -1,3 +1,4 @@
 .env
 generated/*
 build/*
+deploy.txt
