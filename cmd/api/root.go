@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	maxRetryConn = 5
+	maxRetryConn = 10
 	maxDBConn    = 16
 )
 
