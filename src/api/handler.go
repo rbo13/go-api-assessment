@@ -24,6 +24,8 @@ func (a *api) Handlers() *echo.Echo {
 		}),
 	)
 
+	engine.GET("/health", a.healthCheckHandler())
+
 	api := engine.Group(apiGroupVersion)
 
 	api.GET(apiCommonStudents, a.getCommonStudents(teacherSrvc))

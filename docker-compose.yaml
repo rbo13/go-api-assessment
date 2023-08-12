@@ -1,22 +1,19 @@
 version: "3.1"
 
 services:
-  db:
-    image: mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: api_db
-    ports:
-      - "3306:3306"
-
   api:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      DEBUG: false
+    links:
+      - db
     depends_on:
       - db
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: api_db
