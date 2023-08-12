@@ -15,6 +15,8 @@ type registerPayload struct {
 
 func (a *api) registerStudent(teacherSrvc service.TeacherService, studentSrvc service.StudentService, registrationSrvc service.RegistrationService) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		a.logger.Sugar().Info("registerStudent:: Handler Executed")
+
 		var payload registerPayload
 		if err := c.Bind(&payload); err != nil {
 			return c.JSON(http.StatusBadRequest, err)

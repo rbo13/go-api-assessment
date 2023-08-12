@@ -35,9 +35,14 @@ func New(ctx context.Context, log *logger.Log, db *sql.DB) *api {
 	}
 }
 
-func (a *api) StartServer() *server.Server {
+func (a *api) StartServer(appAddress string) *server.Server {
+	if appAddress == "" {
+		appAddress = server.DefaultServerAddr
+	}
+
 	server := server.New(
 		server.WithHandler(a.Handlers()),
+		server.WithAddress(appAddress),
 	)
 
 	return server

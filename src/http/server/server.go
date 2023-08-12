@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	defaultServerIdleTimeout  = 12 * time.Second
-	defaultServerReadTimeout  = 12 * time.Second
-	defaultServerWriteTimeout = 12 * time.Second
-	defaultServerAddr         = "0.0.0.0:3000"
+	DefaultServerIdleTimeout  = 12 * time.Second
+	DefaultServerReadTimeout  = 12 * time.Second
+	DefaultServerWriteTimeout = 12 * time.Second
+	DefaultServerAddr         = "0.0.0.0:3000"
 )
 
 type Server struct {
@@ -23,11 +23,11 @@ type Option func(*Server)
 func New(opts ...Option) *Server {
 	defaultServer := &http.Server{
 		Handler:      http.DefaultServeMux,
-		Addr:         defaultServerAddr,
+		Addr:         DefaultServerAddr,
 		TLSConfig:    getDefaultTLSConfig(),
-		IdleTimeout:  defaultServerIdleTimeout,
-		ReadTimeout:  defaultServerReadTimeout,
-		WriteTimeout: defaultServerWriteTimeout,
+		IdleTimeout:  DefaultServerIdleTimeout,
+		ReadTimeout:  DefaultServerReadTimeout,
+		WriteTimeout: DefaultServerWriteTimeout,
 	}
 
 	server := &Server{

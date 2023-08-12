@@ -25,6 +25,8 @@ type sendNotificationPayload struct {
 
 func (a *api) createTeacher(teacherSrvc service.TeacherService) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		a.logger.Sugar().Info("createTeacher:: Handler Executed")
+
 		var payload teacherPayload
 		if err := c.Bind(&payload); err != nil {
 			return c.JSON(http.StatusBadRequest, err)
@@ -45,6 +47,8 @@ func (a *api) createTeacher(teacherSrvc service.TeacherService) echo.HandlerFunc
 
 func (a *api) getCommonStudents(teacherSrvc service.TeacherService) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		a.logger.Sugar().Info("getCommonStudents:: Handler Executed")
+
 		json := map[string]interface{}{}
 
 		params := c.QueryParams()["teacher"]
@@ -66,6 +70,8 @@ func (a *api) getCommonStudents(teacherSrvc service.TeacherService) echo.Handler
 
 func (a *api) suspendStudent(studentSrvc service.StudentService) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		a.logger.Sugar().Info("suspendStudent:: Handler Executed")
+
 		var payload suspendStudentPayload
 		if err := c.Bind(&payload); err != nil {
 			return c.JSON(http.StatusUnprocessableEntity, err.Error())
@@ -81,6 +87,8 @@ func (a *api) suspendStudent(studentSrvc service.StudentService) echo.HandlerFun
 
 func (a *api) retrieveForNotifications(studentSrvc service.StudentService) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		a.logger.Sugar().Info("retrieveForNotifications:: Handler Executed")
+
 		json := map[string]interface{}{}
 
 		var payload sendNotificationPayload
