@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net/http"
+	"os"
 
 	"github.com/rbo13/go-api-assessment/src/api"
 	"github.com/rbo13/go-api-assessment/src/db"
@@ -16,7 +17,7 @@ func execute(ctx context.Context) error {
 	conn, err := db.CreateNewConnection(&db.Config{
 		Ctx:      ctx,
 		MaxConns: 16,
-		DSN:      "root:password@tcp(localhost:3306)/api_db?parseTime=true&loc=Local",
+		DSN:      os.Getenv("DB_URL"),
 	})
 	if err != nil {
 		logger.Sugar().Fatalf("Cannot start API due to: %v \n", err)
