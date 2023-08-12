@@ -24,7 +24,7 @@ func execute(ctx context.Context) error {
 		DSN:      os.Getenv("DB_URL"),
 	})
 	if err != nil {
-		logger.Sugar().Fatalf("Cannot start API due to: %v \n", err)
+		logger.Sugar().Fatalf("Cannot establish database connection due to: %v \n", err)
 	}
 	defer conn.Close()
 
@@ -35,7 +35,7 @@ func execute(ctx context.Context) error {
 
 	go func() {
 		if err := server.Start(); err != nil && err != http.ErrServerClosed {
-			logger.Sugar().Fatalf("Shutting down server due to: %v \n", err)
+			logger.Sugar().Fatalf("Cannot start server, shutting down due to: %v \n", err)
 		}
 	}()
 

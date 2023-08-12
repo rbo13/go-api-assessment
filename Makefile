@@ -10,8 +10,11 @@ OUT=build/teacher-api
 SUB=cmd/${APP}/root.go
 MAIN=cmd/${APP}/main.go
 
-build:
+build: test
 	CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -race -installsuffix -a -tags netgo ${LDFLAGS} -o ${OUT} ${SUB} ${MAIN}
+
+test:
+	go test -v -race ./...
 
 migrate:
 	migrate -path db/migrations -database $(DATABASE_URL) up
