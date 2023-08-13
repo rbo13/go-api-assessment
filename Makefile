@@ -3,7 +3,7 @@ TODAY = $(shell date +"%Y%m%d_%H%M%S")
 SHA = $(shell git rev-parse --short HEAD)
 
 LDFLAGS=-ldflags='-X api.version=${VERSION}.build.${TODAY}:${SHA} -s -w -extldflags "-static"'
-DATABASE_URL ?= "mysql://root:password@tcp(172.25.0.2)/api_db?parseTime=true&loc=Local"
+DATABASE_URL ?= "mysql://root:password@tcp(db)/api_db?parseTime=true&loc=Local"
 
 APP=api
 OUT=build/teacher-api
