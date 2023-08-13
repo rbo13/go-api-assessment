@@ -21,7 +21,7 @@ func (a *api) registerStudent(teacherSrvc service.TeacherService, studentSrvc se
 
 		var payload registerPayload
 		if err := c.Bind(&payload); err != nil {
-			json["message"] = "Unexpected JSON Payload Format. Please check"
+			json["message"] = JSONErrUnexpectedJSONFormat
 			return c.JSON(http.StatusUnprocessableEntity, json)
 		}
 

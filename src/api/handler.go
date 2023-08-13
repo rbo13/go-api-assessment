@@ -8,6 +8,10 @@ import (
 	"github.com/rbo13/go-api-assessment/src/service"
 )
 
+const (
+	JSONErrUnexpectedJSONFormat = "Unexpected JSON Payload Format. Please check"
+)
+
 func (a *api) Handlers() *echo.Echo {
 	// initialize different services
 	teacherSrvc := service.NewTeacher(a.teacherRepo)

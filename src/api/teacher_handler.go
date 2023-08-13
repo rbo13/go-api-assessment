@@ -1,6 +1,8 @@
 package api
 
 import (
+	"database/sql"
+	"fmt"
 	"net/http"
 	"regexp"
 
@@ -73,13 +75,29 @@ func (a *api) suspendStudent(studentSrvc service.StudentService) echo.HandlerFun
 	return func(c echo.Context) error {
 		a.logger.Sugar().Info("suspendStudent:: Handler Executed")
 
+		json := map[string]interface{}{}
+
 		var payload suspendStudentPayload
 		if err := c.Bind(&payload); err != nil {
-			return c.JSON(http.StatusUnprocessableEntity, err.Error())
+			json["message"] = JSONErrUnexpectedJSONFormat
+			return c.JSON(http.StatusUnprocessableEntity, json)
 		}
 
-		if err := studentSrvc.SuspendStudent(c.Request().Context(), payload.Student); err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
+		student, err := studentSrvc.FindStudentByEmail(c.Request().Context(), payload.Student)
+		if err != nil && err != sql.ErrNoRows {
+			a.logger.Sugar().Errorf("Something went wrong FindStudentByEmail:: %v \n", err)
+			json["message"] = err
+			return c.JSON(http.StatusInternalServerError, json)
+		}
+
+		if student.StudentEmail == "" {
+			json["message"] = "Student not found"
+			return c.JSON(http.StatusNotFound, json)
+		}
+
+		if err := studentSrvc.SuspendStudent(c.Request().Context(), student.StudentEmail); err != nil {
+			json["message"] = fmt.Sprintf("Cannot suspend student due to: %v \n", err)
+			return c.JSON(http.StatusBadRequest, json)
 		}
 
 		return c.JSON(http.StatusNoContent, nil)
