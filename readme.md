@@ -61,10 +61,15 @@ git clone git@github.com:rbo13/go-api-asessment.git
 
 ```bash
 $ cd go-api-assessment
-$ go mod tidy
 
 # generate db related files via `sqlc`
 sqlc generate
+
+# secure environment files
+cp -a .env.test .env
+
+# tidy project
+$ go mod tidy
 ```
 
 ## Run the project via docker-compose:
@@ -80,7 +85,7 @@ $ docker compose up --build
 ## Run the database migration:
 
 ```bash
-$ export DATABASE_URL = "mysql://root:password@tcp(db)/api_db?parseTime=true&loc=Local"
+$ export DATABASE_URL="mysql://root:password@tcp(db)/api_db?parseTime=true&loc=Local"
 $ migrate -path db/migrations -database $(DATABASE_URL) up
 
 # or if you have `make` you can use the provided make command.
