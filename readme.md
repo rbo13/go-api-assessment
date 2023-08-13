@@ -6,26 +6,26 @@ Live URL: http://3.0.101.227
 
 ## Tech stack:
 
-1.  Go - Backend Language.
-2.  MySQL - Database Layer.
+1.  [Go](https://go.dev) - Backend Language.
+2.  [MySQL](https://www.mysql.com) - Database Layer.
 3.  [Migrate](https://github.com/golang-migrate/migrate) - Database Migration tool.
 4.  [sqlc](https://sqlc.dev) - Database Query/Migration generation tool.
-5.  Docker/Docker Compose - Container tools.
-6.  AWS Lightsail - Remote environment.
+5.  [Docker](https://www.docker.com) - Container tools.
+6.  [AWS Lightsail](https://aws.amazon.com/lightsail) - Remote environment.
 
 ## Pre-requisites:
 
-1.  `docker` service is running, `docker-compose` is also installed.
+1.  `docker` service is running.
 
 2.  [sqlc](https://sqlc.dev) is installed. We need `sqlc` to generate our SQL related queries to a valid Go types.
 
-The installation instructions below assumes that Go is correctly installed, i.e `$GOPATH/bin` is in your `$PATH`:
+> NOTE: If you are using `go` to install `sqlc` command, the installation instructions below assumes that Go is correctly installed, i.e `$GOPATH/bin` is in your `$PATH`:
 
 ```bash
 # using brew/linuxbrew
 brew install sqlc
 
-# using go
+# or using go
 go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
 # check version
@@ -73,9 +73,11 @@ $ go mod tidy
 ```
 
 ## Run MySQL via docker:
+
 ```bash
 docker run -d \
   --name=mysql_teacher_db \
+  --network host \
   -p 3306:3306 \
   -e MYSQL_ROOT_PASSWORD=password \
   -e MYSQL_DATABASE=api_db \
@@ -86,21 +88,29 @@ docker run -d \
 
 ```bash
 $ export DATABASE_URL="mysql://root:password@tcp(localhost:3306)/api_db?parseTime=true&loc=Local"
-$ migrate -path db/migrations -database $(DATABASE_URL) up
+$ migrate -path db/migrations -database ${DATABASE_URL} up
 
 # or if you have `make` you can use the provided make command.
 $ make migrate
 ```
 
-## Run the project via docker-compose:
+## Finally, run the project via go build:
+
 ```bash
-$ docker-compose up --build
 
-# or if you are on the latest docker version, docker compose is already available as a docker sub-command.
+# build using `make`
+$ make build
 
-$ docker compose up --build
+# or using `go build`
+go build -installsuffix -a -tags -o ./build/teacher-api ./cmd/api/root.go ./cmd/api/main.go
+
+# run the app after building
+$ ./build/teacher-api
+
 ```
 
 ## Check application:
+
+---
 
 ### The app server should now be running on: localhost:3000
