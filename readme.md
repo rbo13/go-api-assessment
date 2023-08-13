@@ -22,6 +22,9 @@ Live URL: http://3.0.101.227
 The installation instructions below assumes that Go is correctly installed, i.e `$GOPATH/bin` is in your `$PATH`:
 
 ```bash
+# using brew/linuxbrew
+brew install sqlc
+
 # using go
 go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
@@ -79,6 +82,9 @@ $ docker compose up --build
 ```bash
 $ export DATABASE_URL = "mysql://root:password@tcp(db)/api_db?parseTime=true&loc=Local"
 $ migrate -path db/migrations -database $(DATABASE_URL) up
+
+# or if you have `make` you can use the provided make command.
+$ make migrate
 ```
 
 ## Check application:
