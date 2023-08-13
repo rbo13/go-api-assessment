@@ -104,7 +104,7 @@ func (a *api) suspendStudent(studentSrvc service.StudentService) echo.HandlerFun
 	}
 }
 
-func (a *api) retrieveForNotifications(studentSrvc service.StudentService) echo.HandlerFunc {
+func (a *api) retrieveForNotifications(teacherSrvc service.TeacherService, studentSrvc service.StudentService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		a.logger.Sugar().Info("retrieveForNotifications:: Handler Executed")
 
@@ -112,18 +112,31 @@ func (a *api) retrieveForNotifications(studentSrvc service.StudentService) echo.
 
 		var payload sendNotificationPayload
 		if err := c.Bind(&payload); err != nil {
-			json["message"] = err.Error()
+			json["message"] = JSONErrUnexpectedJSONFormat
 			return c.JSON(http.StatusUnprocessableEntity, json)
+		}
+
+		// check first if the teacher exist before sending notification
+		teacher, err := teacherSrvc.RetrieveTeacherByEmail(c.Request().Context(), payload.Teacher)
+		if err != nil && err != sql.ErrNoRows {
+			a.logger.Sugar().Errorf("Something went wrong RetrieveTeacherByEmail:: %v \n", err)
+			json["message"] = err
+			return c.JSON(http.StatusInternalServerError, json)
+		}
+
+		if teacher.Email == "" {
+			json["message"] = "Cannot retrieve notification. Teacher not found"
+			return c.JSON(http.StatusNotFound, json)
 		}
 
 		emails := extractMentionedEmails(payload.Notification)
 
-		recipients, err := studentSrvc.FindMentionedStudentsByTeacher(c.Request().Context(), payload.Teacher, emails)
+		recipients, err := studentSrvc.FindMentionedStudentsByTeacher(c.Request().Context(), teacher.Email, emails)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		json["recepients"] = recipients
+		json["recipients"] = recipients
 		return c.JSON(http.StatusOK, json)
 	}
 }

@@ -61,22 +61,19 @@ func (repo *MySQLStudentRepository) Suspend(ctx context.Context, email string) e
 	return nil
 }
 
-func (repo *MySQLStudentRepository) GetStudentMentionsFromTeacher(ctx context.Context, teacherEmail string, studentEmails []string) (domain.Students, error) {
+func (repo *MySQLStudentRepository) GetStudentMentionsFromTeacher(ctx context.Context, teacherEmail string, studentEmails []string) (domain.NotificationRecipients, error) {
+	var recipients domain.NotificationRecipients
+
 	results, err := repo.queries.GetMentionsFromTeacher(ctx, database.GetMentionsFromTeacherParams{
 		Email:  teacherEmail,
 		Emails: studentEmails,
 	})
 	if err != nil {
-		return domain.Students{}, err
+		return recipients, err
 	}
 
-	var recipients domain.Students
 	for _, result := range results {
-		student := domain.Student{
-			StudentEmail: result.StudentEmail,
-		}
-
-		recipients = append(recipients, student)
+		recipients = append(recipients, result.StudentEmail)
 	}
 
 	return recipients, nil

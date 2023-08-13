@@ -14,4 +14,6 @@ type Student struct {
 	Suspended    bool
 }
 
+type NotificationRecipients []string
+
 type Students []Student

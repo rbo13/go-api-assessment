@@ -10,7 +10,7 @@ import (
 type StudentService interface {
 	AddStudent(context.Context, domain.Student) (domain.Student, error)
 	FindStudentByEmail(context.Context, string) (domain.Student, error)
-	FindMentionedStudentsByTeacher(context.Context, string, []string) (domain.Students, error)
+	FindMentionedStudentsByTeacher(context.Context, string, []string) (domain.NotificationRecipients, error)
 	SuspendStudent(context.Context, string) error
 }
 
@@ -36,6 +36,14 @@ func (ss *studentService) SuspendStudent(ctx context.Context, email string) erro
 	return ss.studentRepository.Suspend(ctx, email)
 }
 
-func (ss *studentService) FindMentionedStudentsByTeacher(ctx context.Context, teacherEmail string, studentEmails []string) (domain.Students, error) {
-	return ss.studentRepository.GetStudentMentionsFromTeacher(ctx, teacherEmail, studentEmails)
+func (ss *studentService) FindMentionedStudentsByTeacher(ctx context.Context, teacherEmail string, studentEmails []string) (domain.NotificationRecipients, error) {
+	var recipients domain.NotificationRecipients
+	res, err := ss.studentRepository.GetStudentMentionsFromTeacher(ctx, teacherEmail, studentEmails)
+	if err != nil {
+		return recipients, err
+	}
+
+	recipients = append(recipients, res...)
+
+	return recipients, nil
 }
