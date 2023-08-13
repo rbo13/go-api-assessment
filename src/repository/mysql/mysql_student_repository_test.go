@@ -31,6 +31,14 @@ func TestMySQLStudentRepository(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
+	t.Run("Should Suspend a given Student", func(t *testing.T) {
+		studentToBeSuspended := "mock_student@gmail.com"
+
+		mock.ExpectExec("UPDATE students").WithArgs(studentToBeSuspended).WillReturnResult(sqlmock.NewResult(0, 1))
+		err := repo.Suspend(ctx, studentToBeSuspended)
+		assert.NoError(t, err)
+	})
+
 	t.Run("Should Get Student Notifications", func(t *testing.T) {
 		teacherEmail := "teacherjoe@gmail.com"
 		studentEmails := domain.NotificationRecipients{"studentjon@gmail.com"}

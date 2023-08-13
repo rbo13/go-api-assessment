@@ -31,8 +31,23 @@ func (*MockStudentRepository) Save(context.Context, domain.Student) (domain.Stud
 }
 
 // Suspend implements repository.StudentRepository.
-func (*MockStudentRepository) Suspend(context.Context, string) error {
-	panic("unimplemented")
+func (m *MockStudentRepository) Suspend(ctx context.Context, studentEmail string) error {
+	args := m.Called(ctx, studentEmail)
+
+	return args.Error(0)
+}
+
+func TestStudentService_SuspendAGivenStudent(t *testing.T) {
+	ctx := context.Background()
+
+	mockRepo := &MockStudentRepository{}
+	studentService := service.NewStudent(mockRepo)
+
+	studentToBeSuspended := "mock_student@gmail.com"
+
+	mockRepo.On("Suspend", ctx, studentToBeSuspended).Return(nil)
+	err := studentService.SuspendStudent(ctx, studentToBeSuspended)
+	assert.NoError(t, err)
 }
 
 func TestStudentService_FindMentionedStudentsByTeacher(t *testing.T) {
