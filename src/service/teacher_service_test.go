@@ -77,7 +77,6 @@ func TestTeacherService_GetCommonStudents(t *testing.T) {
 	mockRepo.On("FindCommonStudents", ctx, mock.Anything).Return(commonStudents, nil)
 
 	students, err := teacherService.RetrieveCommonStudents(ctx, emails)
-	t.Log("Email Results: ", emails)
 	assert.NoError(t, err)
 	assert.Equal(t, commonStudents, students)
 

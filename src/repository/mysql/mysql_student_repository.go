@@ -72,9 +72,7 @@ func (repo *MySQLStudentRepository) GetStudentMentionsFromTeacher(ctx context.Co
 		return recipients, err
 	}
 
-	for _, result := range results {
-		recipients = append(recipients, result.StudentEmail)
-	}
+	recipients = append(recipients, results...)
 
 	return recipients, nil
 }

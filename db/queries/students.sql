@@ -29,7 +29,7 @@ WHERE t.email = ?
 GROUP BY t.email;
 
 -- name: GetMentionsFromTeacher :many
-SELECT DISTINCT s.student_email, s.suspended
+SELECT DISTINCT s.student_email
 FROM students s
 LEFT JOIN registrations r ON s.id = r.student_id
 LEFT JOIN teachers t ON r.teacher_id = t.id

@@ -1,6 +1,7 @@
 package mysql_test
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -28,5 +29,31 @@ func TestMySQLStudentRepository(t *testing.T) {
 		res, err := repo.Save(ctx, mockStudent)
 		assert.NotZero(t, res.ID)
 		assert.NoError(t, err)
+	})
+
+	t.Run("Should Get Student Notifications", func(t *testing.T) {
+		teacherEmail := "teacherjoe@gmail.com"
+		studentEmails := domain.NotificationRecipients{"studentjon@gmail.com"}
+
+		expectedQuery := `-- name: GetMentionsFromTeacher :many SELECT DISTINCT s.student_email
+			FROM students s
+			LEFT JOIN registrations r ON s.id = r.student_id
+			LEFT JOIN teachers t ON r.teacher_id = t.id
+			WHERE (t.email = ? OR s.student_email IN (?)) AND s.suspended = 0`
+
+		expectedRows := sqlmock.NewRows([]string{"student_email"}).
+			AddRow("studentjon@gmail.com").
+			AddRow("commonstudent1@gmail.com").
+			AddRow("commonstudent2@gmail.com").
+			AddRow("student_only_under_teacher_joe@gmail.com")
+
+		mock.ExpectQuery(regexp.QuoteMeta(expectedQuery)).
+			WithArgs(teacherEmail, studentEmails[0]).
+			WillReturnRows(expectedRows)
+
+		recipients, err := repo.GetStudentMentionsFromTeacher(ctx, teacherEmail, studentEmails)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, recipients)
+		assert.NoError(t, mock.ExpectationsWereMet())
 	})
 }
