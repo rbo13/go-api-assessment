@@ -77,7 +77,6 @@ $ go mod tidy
 ```bash
 docker run -d \
   --name=mysql_teacher_db \
-  --network host \
   -p 3306:3306 \
   -e MYSQL_ROOT_PASSWORD=password \
   -e MYSQL_DATABASE=api_db \
@@ -94,19 +93,10 @@ $ migrate -path db/migrations -database ${DATABASE_URL} up
 $ make migrate
 ```
 
-## Finally, run the project via go build:
+## Finally, run the project via `go run`:
 
 ```bash
-
-# build using `make`
-$ make build
-
-# or using `go build`
-go build -installsuffix -a -tags -o ./build/teacher-api ./cmd/api/root.go ./cmd/api/main.go
-
-# run the app after building
-$ ./build/teacher-api
-
+go run ./cmd/api/root.go ./cmd/api/main.go
 ```
 
 ## Check application:
