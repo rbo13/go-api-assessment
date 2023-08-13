@@ -72,24 +72,33 @@ cp -a .env.test .env
 $ go mod tidy
 ```
 
-## Run the project via docker-compose:
+## Run MySQL via docker:
+```bash
+docker run -d \
+  --name=mysql_teacher_db \
+  -p 3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=password \
+  -e MYSQL_DATABASE=api_db \
+  mysql:latest
+```
 
+## Run the database migration:
+
+```bash
+$ export DATABASE_URL="mysql://root:password@tcp(localhost:3306)/api_db?parseTime=true&loc=Local"
+$ migrate -path db/migrations -database $(DATABASE_URL) up
+
+# or if you have `make` you can use the provided make command.
+$ make migrate
+```
+
+## Run the project via docker-compose:
 ```bash
 $ docker-compose up --build
 
 # or if you are on the latest docker version, docker compose is already available as a docker sub-command.
 
 $ docker compose up --build
-```
-
-## Run the database migration:
-
-```bash
-$ export DATABASE_URL="mysql://root:password@tcp(db)/api_db?parseTime=true&loc=Local"
-$ migrate -path db/migrations -database $(DATABASE_URL) up
-
-# or if you have `make` you can use the provided make command.
-$ make migrate
 ```
 
 ## Check application:
