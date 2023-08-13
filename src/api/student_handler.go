@@ -17,16 +17,21 @@ func (a *api) registerStudent(teacherSrvc service.TeacherService, studentSrvc se
 	return func(c echo.Context) error {
 		a.logger.Sugar().Info("registerStudent:: Handler Executed")
 
+		json := map[string]interface{}{}
+
 		var payload registerPayload
 		if err := c.Bind(&payload); err != nil {
-			return c.JSON(http.StatusBadRequest, err)
+			json["message"] = "Unexpected JSON Payload Format. Please check"
+			return c.JSON(http.StatusUnprocessableEntity, json)
 		}
 
 		// if the teacher, does not exist
 		// they should not be able to add
 		currentTeacher, err := teacherSrvc.RetrieveTeacherByEmail(c.Request().Context(), payload.Teacher)
 		if err != nil {
-			return c.JSON(http.StatusNotFound, "Teacher does not exist, please create!")
+			a.logger.Sugar().Errorf("Something went wrong retrieving teacher due to: %v", err)
+			json["message"] = "Teacher does not exist, please create!"
+			return c.JSON(http.StatusNotFound, json)
 		}
 
 		for _, student := range payload.Students {
@@ -40,6 +45,7 @@ func (a *api) registerStudent(teacherSrvc service.TeacherService, studentSrvc se
 			if currStudent.ID == 0 {
 				newStudent, err := studentSrvc.AddStudent(c.Request().Context(), s)
 				if err != nil {
+					a.logger.Sugar().Errorf("Something went wrong Adding Student: %s, skipping", s.StudentEmail)
 					continue
 				}
 
@@ -47,6 +53,7 @@ func (a *api) registerStudent(teacherSrvc service.TeacherService, studentSrvc se
 					TeacherID: currentTeacher.ID,
 					StudentID: newStudent.ID,
 				}); err != nil {
+					a.logger.Sugar().Errorf("Something went wrong Registering Student: %s to Teacher: %s, skipping", s.StudentEmail, currentTeacher.Email)
 					continue
 				}
 			} else {
@@ -54,6 +61,7 @@ func (a *api) registerStudent(teacherSrvc service.TeacherService, studentSrvc se
 					TeacherID: currentTeacher.ID,
 					StudentID: currStudent.ID,
 				}); err != nil {
+					a.logger.Sugar().Errorf("Something went wrong Registering Current Student: %s to Teacher: %s, skipping", currStudent.StudentEmail, currentTeacher.Email)
 					continue
 				}
 			}
