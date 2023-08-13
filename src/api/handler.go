@@ -1,6 +1,7 @@
 package api
 
 import (
+	"net/http"
 	"os"
 
 	"github.com/labstack/echo/v4"
@@ -27,6 +28,10 @@ func (a *api) Handlers() *echo.Echo {
 			Output: os.Stdout,
 		}),
 	)
+
+	engine.GET("/", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, "OK")
+	})
 
 	engine.GET("/health", a.healthCheckHandler())
 
