@@ -59,7 +59,8 @@ func (a *api) getCommonStudents(teacherSrvc service.TeacherService) echo.Handler
 
 		res, err := teacherSrvc.RetrieveCommonStudents(c.Request().Context(), params)
 		if err != nil {
-			return c.JSON(http.StatusNotFound, err)
+			json["message"] = "No Common Student Found"
+			return c.JSON(http.StatusNotFound, json)
 		}
 
 		json["students"] = res
