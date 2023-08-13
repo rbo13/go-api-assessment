@@ -54,7 +54,7 @@ For more installation instructions, see golang-migrate installation [docs](https
 ## Cloning the project:
 
 ```bash
-git clone git@github.com:rbo13/go-api-asessment.git
+git clone git@github.com:rbo13/go-api-assessment.git
 ```
 
 ## Setup the project:
