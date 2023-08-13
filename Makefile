@@ -1,4 +1,4 @@
-VERSION=v1.0.0
+VERSION=v1.0.1
 TODAY = $(shell date +"%Y%m%d_%H%M%S")
 SHA = $(shell git rev-parse --short HEAD)
 
