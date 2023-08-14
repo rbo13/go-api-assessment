@@ -11,6 +11,7 @@ import (
 
 const (
 	JSONErrUnexpectedJSONFormat = "Unexpected JSON Payload Format. Please check"
+	APIVersion                  = "v1.0.3"
 )
 
 func (a *api) Handlers() *echo.Echo {
@@ -30,7 +31,12 @@ func (a *api) Handlers() *echo.Echo {
 	)
 
 	engine.GET("/", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "OK")
+		json := map[string]interface{}{
+			"message": "OK",
+			"version": APIVersion,
+		}
+
+		return c.JSON(http.StatusOK, json)
 	})
 
 	engine.GET("/health", a.healthCheckHandler())
