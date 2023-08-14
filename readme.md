@@ -110,3 +110,7 @@ go run ./cmd/api/root.go ./cmd/api/main.go
 If all is well, a message like this should be seen:
 
 ![image](https://github.com/rbo13/go-api-assessment/assets/10726631/1990a3bd-3c18-4062-8ec1-3927a6102d66)
+
+
+## A screencast of how-to setup the project can be seen here:
+[![asciicast](https://asciinema.org/a/602477.svg)](https://asciinema.org/a/602477)
