@@ -1,0 +1,192 @@
+{
+	"info": {
+		"_postman_id": "cb681be2-a3da-4338-92ed-8b2dbdb4cde9",
+		"name": "Staging: Go API Assesment (Teacher-Student App)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19726783"
+	},
+	"item": [
+		{
+			"name": "Register student to a teacher",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"teacher\": \"teacherken@gmail.com\",\n  \"students\":\n    [\n        \"student_only_under_teacher_ken@gmail.com\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://3.0.101.227/api/v1/register",
+					"protocol": "http",
+					"host": [
+						"3",
+						"0",
+						"101",
+						"227"
+					],
+					"path": [
+						"api",
+						"v1",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Common Students by Teacher",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://3.0.101.227/api/v1/commonstudents?teacher=teacherken@gmail.com&teacher=teacherjoe@gmail.com",
+					"protocol": "http",
+					"host": [
+						"3",
+						"0",
+						"101",
+						"227"
+					],
+					"path": [
+						"api",
+						"v1",
+						"commonstudents"
+					],
+					"query": [
+						{
+							"key": "teacher",
+							"value": "teacherken@gmail.com"
+						},
+						{
+							"key": "teacher",
+							"value": "teacherjoe@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Teacher",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"teacherjoe@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://3.0.101.227/api/v1/teachers",
+					"protocol": "http",
+					"host": [
+						"3",
+						"0",
+						"101",
+						"227"
+					],
+					"path": [
+						"api",
+						"v1",
+						"teachers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Suspend Student",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"student\": \"studentmary@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://3.0.101.227/api/v1/suspend",
+					"protocol": "http",
+					"host": [
+						"3",
+						"0",
+						"101",
+						"227"
+					],
+					"path": [
+						"api",
+						"v1",
+						"suspend"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve Notification",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"teacher\":  \"teacherjoe@gmail.com\",\n  \"notification\": \"Hi, everybody! including @student_only_under_teacher_ken@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://3.0.101.227/api/v1/retrievefornotifications",
+					"protocol": "http",
+					"host": [
+						"3",
+						"0",
+						"101",
+						"227"
+					],
+					"path": [
+						"api",
+						"v1",
+						"retrievefornotifications"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://3.0.101.227/health",
+					"protocol": "http",
+					"host": [
+						"3",
+						"0",
+						"101",
+						"227"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
