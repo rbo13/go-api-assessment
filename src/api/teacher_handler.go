@@ -25,9 +25,9 @@ type sendNotificationPayload struct {
 	Notification string `json:"notification"`
 }
 
-func (a *api) createTeacher(teacherSrvc service.TeacherService) echo.HandlerFunc {
+func (a *api) CreateTeacher(teacherSrvc service.TeacherService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		a.logger.Sugar().Info("createTeacher:: Handler Executed")
+		a.logger.Sugar().Info("CreateTeacher:: Handler Executed")
 
 		var payload teacherPayload
 		if err := c.Bind(&payload); err != nil {

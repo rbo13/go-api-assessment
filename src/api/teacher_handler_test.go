@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -23,7 +24,8 @@ type mockTeacherService struct {
 
 // AddTeacher implements service.TeacherService.
 func (m *mockTeacherService) AddTeacher(ctx context.Context, teacher domain.Teacher) error {
-	panic("unimplemented")
+	args := m.Called(ctx, teacher)
+	return args.Error(0)
 }
 
 // RetrieveTeacherByEmail implements service.TeacherService.
@@ -53,6 +55,31 @@ func TestTeacherHandler(t *testing.T) {
 	studentService := new(mockStudentService)
 
 	testAPI := api.New(ctx, logger, db)
+
+	t.Run("Should Create a new Teacher", func(t *testing.T) {
+		testNewTeacher := domain.Teacher{
+			Email: "testnewteacher@gmail.com",
+		}
+
+		mockPayload := `{
+			"email": "%s"
+		}`
+
+		requestPayload := fmt.Sprintf(mockPayload, testNewTeacher.Email)
+
+		teacherService.On("AddTeacher", ctx, testNewTeacher).Return(nil)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/teachers", strings.NewReader(requestPayload))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		response := httptest.NewRecorder()
+		c := e.NewContext(req, response)
+		c.SetPath("/api/v1/teachers")
+		c.Set("teacherSrvc", teacherService)
+
+		handler := testAPI.CreateTeacher(teacherService)
+		assert.NoError(t, handler(c))
+		assert.Equal(t, http.StatusCreated, response.Code)
+	})
 
 	t.Run("Should GET common Students by a given Teacher", func(t *testing.T) {
 		teacherService.
