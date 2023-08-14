@@ -71,9 +71,9 @@ func (a *api) GetCommonStudents(teacherSrvc service.TeacherService) echo.Handler
 	}
 }
 
-func (a *api) suspendStudent(studentSrvc service.StudentService) echo.HandlerFunc {
+func (a *api) SuspendStudent(studentSrvc service.StudentService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		a.logger.Sugar().Info("suspendStudent:: Handler Executed")
+		a.logger.Sugar().Info("SuspendStudent:: Handler Executed")
 
 		json := map[string]interface{}{}
 

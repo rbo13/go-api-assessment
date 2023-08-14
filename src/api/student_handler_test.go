@@ -39,8 +39,9 @@ func (m *mockStudentService) FindStudentByEmail(ctx context.Context, studentEmai
 }
 
 // SuspendStudent implements service.StudentService.
-func (*mockStudentService) SuspendStudent(context.Context, string) error {
-	panic("unimplemented")
+func (m *mockStudentService) SuspendStudent(ctx context.Context, studentEmail string) error {
+	args := m.Called(ctx, studentEmail)
+	return args.Error(0)
 }
 
 type mockRegistrationService struct {
@@ -54,6 +55,8 @@ func (m *mockRegistrationService) AddRegistration(ctx context.Context, reg domai
 }
 
 func TestStudentHandler(t *testing.T) {
+	ctx := context.Background()
+
 	e := echo.New()
 	logger := logger.New("test_api")
 
@@ -76,22 +79,22 @@ func TestStudentHandler(t *testing.T) {
 		}`
 
 		teacherService.
-			On("RetrieveTeacherByEmail", mock.Anything, mock.Anything).
+			On("RetrieveTeacherByEmail", ctx, mock.Anything).
 			Return(domain.Teacher{
 				Email: "teacher@example.com",
 			}, nil)
 
-		studentService.On("FindStudentByEmail", mock.Anything, "student1@example.com").
+		studentService.On("FindStudentByEmail", ctx, "student1@example.com").
 			Return(domain.Student{
 				StudentEmail: "student1@example.com",
 			}, nil)
 
-		studentService.On("AddStudent", mock.Anything, mock.Anything).
+		studentService.On("AddStudent", ctx, mock.Anything).
 			Return(domain.Student{
 				StudentEmail: "student1@example.com",
 			}, nil)
 
-		registrationService.On("AddRegistration", mock.Anything, mock.Anything).
+		registrationService.On("AddRegistration", ctx, mock.Anything).
 			Return(nil)
 
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/register", strings.NewReader(requestPayload))
@@ -104,6 +107,31 @@ func TestStudentHandler(t *testing.T) {
 		c.Set("registrationSrvc", registrationService)
 
 		handler := testAPI.RegisterStudent(teacherService, studentService, registrationService)
+		assert.NoError(t, handler(c))
+		assert.Equal(t, http.StatusNoContent, response.Code)
+	})
+
+	t.Run("Should suspend a given Student", func(t *testing.T) {
+		requestPayload := `{
+			"student": "commonstudent1@gmail.com"
+		}`
+
+		studentService.On("FindStudentByEmail", ctx, "commonstudent1@gmail.com").
+			Return(domain.Student{
+				StudentEmail: "commonstudent1@gmail.com",
+			}, nil)
+
+		studentService.On("SuspendStudent", ctx, "commonstudent1@gmail.com").
+			Return(nil)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/suspend", strings.NewReader(requestPayload))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		response := httptest.NewRecorder()
+		c := e.NewContext(req, response)
+		c.SetPath("/api/v1/suspend")
+		c.Set("studentSrvc", studentService)
+
+		handler := testAPI.SuspendStudent(studentService)
 		assert.NoError(t, handler(c))
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
