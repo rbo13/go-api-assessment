@@ -104,9 +104,9 @@ func (a *api) suspendStudent(studentSrvc service.StudentService) echo.HandlerFun
 	}
 }
 
-func (a *api) retrieveForNotifications(teacherSrvc service.TeacherService, studentSrvc service.StudentService) echo.HandlerFunc {
+func (a *api) RetrieveForNotifications(teacherSrvc service.TeacherService, studentSrvc service.StudentService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		a.logger.Sugar().Info("retrieveForNotifications:: Handler Executed")
+		a.logger.Sugar().Info("RetrieveForNotifications:: Handler Executed")
 
 		json := map[string]interface{}{}
 

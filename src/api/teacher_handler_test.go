@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -37,6 +38,8 @@ func (m *mockTeacherService) RetrieveCommonStudents(ctx context.Context, teacher
 }
 
 func TestTeacherHandler(t *testing.T) {
+	ctx := context.Background()
+
 	e := echo.New()
 	logger := logger.New("test_api")
 
@@ -47,11 +50,13 @@ func TestTeacherHandler(t *testing.T) {
 	defer db.Close()
 
 	teacherService := new(mockTeacherService)
-	testAPI := api.New(context.Background(), logger, db)
+	studentService := new(mockStudentService)
+
+	testAPI := api.New(ctx, logger, db)
 
 	t.Run("Should GET common Students by a given Teacher", func(t *testing.T) {
 		teacherService.
-			On("RetrieveCommonStudents", mock.Anything, []string{"teacherken@gmail.com"}).
+			On("RetrieveCommonStudents", ctx, []string{"teacherken@gmail.com"}).
 			Return([]string{"mock_student1@gmail.com", "mock_student2@gmail.com"}, nil)
 		expectedResponse := `{"students": ["mock_student1@gmail.com", "mock_student2@gmail.com"]}`
 
@@ -71,7 +76,7 @@ func TestTeacherHandler(t *testing.T) {
 
 	t.Run("Should not be able to GET common Students by a given Teacher", func(t *testing.T) {
 		teacherService.
-			On("RetrieveCommonStudents", mock.Anything, []string{"teacher1"}).
+			On("RetrieveCommonStudents", ctx, []string{"teacher1"}).
 			Return([]string{}, errors.New("No Common Student Found"))
 
 		expectedResponse := `{"message": "No Common Student Found"}`
@@ -88,5 +93,38 @@ func TestTeacherHandler(t *testing.T) {
 
 		// assert JSON response
 		assert.JSONEq(t, expectedResponse, rec.Body.String())
+	})
+
+	t.Run("Should Retrieve Notification For Students", func(t *testing.T) {
+		requestPayload := `{
+			"teacher":  "teacherjoe@gmail.com",
+			"notification": "Hey! @mock_student1@gmail.com"
+		}`
+
+		teacher := "teacherjoe@gmail.com"
+		recipients := []string{"mock_student1@gmail.com"}
+
+		teacherService.
+			On("RetrieveTeacherByEmail", ctx, teacher).
+			Return(domain.Teacher{
+				Email: teacher,
+			}, nil)
+
+		studentService.On("FindMentionedStudentsByTeacher", ctx, teacher, recipients).
+			Return(domain.NotificationRecipients{
+				"mock_student1@gmail.com",
+			}, nil)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/retrievefornotifications", strings.NewReader(requestPayload))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		response := httptest.NewRecorder()
+		c := e.NewContext(req, response)
+		c.SetPath("/api/v1/retrievefornotifications")
+		c.Set("teacherSrvc", teacherService)
+		c.Set("studentSrvc", studentService)
+
+		handler := testAPI.RetrieveForNotifications(teacherService, studentService)
+		assert.NoError(t, handler(c))
+		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }

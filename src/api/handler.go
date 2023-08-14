@@ -41,7 +41,7 @@ func (a *api) Handlers() *echo.Echo {
 	api.POST(apiCreateTeacher, a.createTeacher(teacherSrvc))
 	api.POST(apiRegisterStudent, a.RegisterStudent(teacherSrvc, studentSrvc, registrationSrvc))
 	api.POST(apiSuspend, a.suspendStudent(studentSrvc))
-	api.POST(apiRetrieveNotifications, a.retrieveForNotifications(teacherSrvc, studentSrvc))
+	api.POST(apiRetrieveNotifications, a.RetrieveForNotifications(teacherSrvc, studentSrvc))
 
 	return engine
 }

@@ -27,8 +27,9 @@ func (m *mockStudentService) AddStudent(ctx context.Context, student domain.Stud
 }
 
 // FindMentionedStudentsByTeacher implements service.StudentService.
-func (*mockStudentService) FindMentionedStudentsByTeacher(context.Context, string, []string) (domain.NotificationRecipients, error) {
-	panic("unimplemented")
+func (m *mockStudentService) FindMentionedStudentsByTeacher(ctx context.Context, teacherEmail string, studentEmails []string) (domain.NotificationRecipients, error) {
+	args := m.Called(ctx, teacherEmail, studentEmails)
+	return args.Get(0).(domain.NotificationRecipients), args.Error(1)
 }
 
 // FindStudentByEmail implements service.StudentService.
