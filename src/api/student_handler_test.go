@@ -97,11 +97,11 @@ func TestStudentHandler(t *testing.T) {
 		registrationService.On("AddRegistration", ctx, mock.Anything).
 			Return(nil)
 
-		req := httptest.NewRequest(http.MethodPost, "/api/v1/register", strings.NewReader(requestPayload))
+		req := httptest.NewRequest(http.MethodPost, "/api/register", strings.NewReader(requestPayload))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		response := httptest.NewRecorder()
 		c := e.NewContext(req, response)
-		c.SetPath("/api/v1/register")
+		c.SetPath("/api/register")
 		c.Set("teacherSrvc", teacherService)
 		c.Set("studentSrvc", studentService)
 		c.Set("registrationSrvc", registrationService)
@@ -124,11 +124,11 @@ func TestStudentHandler(t *testing.T) {
 		studentService.On("SuspendStudent", ctx, "commonstudent1@gmail.com").
 			Return(nil)
 
-		req := httptest.NewRequest(http.MethodPost, "/api/v1/suspend", strings.NewReader(requestPayload))
+		req := httptest.NewRequest(http.MethodPost, "/api/suspend", strings.NewReader(requestPayload))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		response := httptest.NewRecorder()
 		c := e.NewContext(req, response)
-		c.SetPath("/api/v1/suspend")
+		c.SetPath("/api/suspend")
 		c.Set("studentSrvc", studentService)
 
 		handler := testAPI.SuspendStudent(studentService)

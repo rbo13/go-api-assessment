@@ -69,11 +69,11 @@ func TestTeacherHandler(t *testing.T) {
 
 		teacherService.On("AddTeacher", ctx, testNewTeacher).Return(nil)
 
-		req := httptest.NewRequest(http.MethodPost, "/api/v1/teachers", strings.NewReader(requestPayload))
+		req := httptest.NewRequest(http.MethodPost, "/api/teachers", strings.NewReader(requestPayload))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		response := httptest.NewRecorder()
 		c := e.NewContext(req, response)
-		c.SetPath("/api/v1/teachers")
+		c.SetPath("/api/teachers")
 		c.Set("teacherSrvc", teacherService)
 
 		handler := testAPI.CreateTeacher(teacherService)
@@ -87,10 +87,10 @@ func TestTeacherHandler(t *testing.T) {
 			Return([]string{"mock_student1@gmail.com", "mock_student2@gmail.com"}, nil)
 		expectedResponse := `{"students": ["mock_student1@gmail.com", "mock_student2@gmail.com"]}`
 
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/commonstudents?teacher=teacherken@gmail.com", nil)
+		req := httptest.NewRequest(http.MethodGet, "/api/commonstudents?teacher=teacherken@gmail.com", nil)
 		rec := httptest.NewRecorder()
 		c := e.NewContext(req, rec)
-		c.SetPath("/api/v1/commonstudents")
+		c.SetPath("/api/commonstudents")
 		c.Set("teacherSrvc", teacherService)
 
 		handler := testAPI.GetCommonStudents(teacherService)
@@ -108,10 +108,10 @@ func TestTeacherHandler(t *testing.T) {
 
 		expectedResponse := `{"message": "No Common Student Found"}`
 
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/commonstudents?teacher=teacher1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/api/commonstudents?teacher=teacher1", nil)
 		rec := httptest.NewRecorder()
 		c := e.NewContext(req, rec)
-		c.SetPath("/api/v1/commonstudents")
+		c.SetPath("/api/commonstudents")
 		c.Set("teacherSrvc", teacherService)
 
 		handler := testAPI.GetCommonStudents(teacherService)
@@ -142,11 +142,11 @@ func TestTeacherHandler(t *testing.T) {
 				"mock_student1@gmail.com",
 			}, nil)
 
-		req := httptest.NewRequest(http.MethodPost, "/api/v1/retrievefornotifications", strings.NewReader(requestPayload))
+		req := httptest.NewRequest(http.MethodPost, "/api/retrievefornotifications", strings.NewReader(requestPayload))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		response := httptest.NewRecorder()
 		c := e.NewContext(req, response)
-		c.SetPath("/api/v1/retrievefornotifications")
+		c.SetPath("/api/retrievefornotifications")
 		c.Set("teacherSrvc", teacherService)
 		c.Set("studentSrvc", studentService)
 

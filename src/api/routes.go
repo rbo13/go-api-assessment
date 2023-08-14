@@ -1,7 +1,7 @@
 package api
 
 const (
-	apiGroupVersion          = "/api/v1"
+	apiGroupVersion          = "/api"
 	apiCommonStudents        = "/commonstudents"
 	apiCreateTeacher         = "/teachers"
 	apiRegisterStudent       = "/register"
