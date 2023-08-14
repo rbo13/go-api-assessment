@@ -28,6 +28,7 @@ type sendNotificationPayload struct {
 func (a *api) CreateTeacher(teacherSrvc service.TeacherService) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		a.logger.Sugar().Info("CreateTeacher:: Handler Executed")
+		json := map[string]interface{}{}
 
 		var payload teacherPayload
 		if err := c.Bind(&payload); err != nil {
@@ -39,11 +40,18 @@ func (a *api) CreateTeacher(teacherSrvc service.TeacherService) echo.HandlerFunc
 			Email:       payload.Email,
 		}
 
+		if !teacher.ValidEmail() {
+			json["message"] = "The given teacher's email is not valid, please try again"
+			return c.JSON(http.StatusBadRequest, json)
+		}
+
 		if err := teacherSrvc.AddTeacher(c.Request().Context(), teacher); err != nil {
+			json["message"] = fmt.Sprintf("Cannot add the Teacher due to: %v", err)
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		return c.JSON(http.StatusCreated, teacher)
+		json["teacher"] = teacher
+		return c.JSON(http.StatusCreated, json)
 	}
 }
 
@@ -83,19 +91,28 @@ func (a *api) SuspendStudent(studentSrvc service.StudentService) echo.HandlerFun
 			return c.JSON(http.StatusUnprocessableEntity, json)
 		}
 
-		student, err := studentSrvc.FindStudentByEmail(c.Request().Context(), payload.Student)
+		s := domain.Student{
+			StudentEmail: payload.Student,
+		}
+
+		if !s.ValidEmail() {
+			json["message"] = "Student email is invalid, please try again"
+			return c.JSON(http.StatusBadRequest, json)
+		}
+
+		foundStudent, err := studentSrvc.FindStudentByEmail(c.Request().Context(), s.StudentEmail)
 		if err != nil && err != sql.ErrNoRows {
 			a.logger.Sugar().Errorf("Something went wrong FindStudentByEmail:: %v \n", err)
 			json["message"] = err
 			return c.JSON(http.StatusInternalServerError, json)
 		}
 
-		if student.StudentEmail == "" {
+		if foundStudent.StudentEmail == "" {
 			json["message"] = "Student not found"
 			return c.JSON(http.StatusNotFound, json)
 		}
 
-		if err := studentSrvc.SuspendStudent(c.Request().Context(), student.StudentEmail); err != nil {
+		if err := studentSrvc.SuspendStudent(c.Request().Context(), foundStudent.StudentEmail); err != nil {
 			json["message"] = fmt.Sprintf("Cannot suspend student due to: %v \n", err)
 			return c.JSON(http.StatusBadRequest, json)
 		}

@@ -41,6 +41,11 @@ func (a *api) RegisterStudent(teacherSrvc service.TeacherService, studentSrvc se
 				Suspended:    false,
 			}
 
+			if !s.ValidEmail() {
+				a.logger.Sugar().Warnf("Skipping: %s as it is not a valid email", s.StudentEmail)
+				continue
+			}
+
 			currStudent, _ := studentSrvc.FindStudentByEmail(c.Request().Context(), s.StudentEmail)
 			if currStudent.ID == 0 {
 				newStudent, err := studentSrvc.AddStudent(c.Request().Context(), s)
