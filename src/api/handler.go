@@ -37,7 +37,7 @@ func (a *api) Handlers() *echo.Echo {
 
 	api := engine.Group(apiGroupVersion)
 
-	api.GET(apiCommonStudents, a.getCommonStudents(teacherSrvc))
+	api.GET(apiCommonStudents, a.GetCommonStudents(teacherSrvc))
 	api.POST(apiCreateTeacher, a.createTeacher(teacherSrvc))
 	api.POST(apiRegisterStudent, a.registerStudent(teacherSrvc, studentSrvc, registrationSrvc))
 	api.POST(apiSuspend, a.suspendStudent(studentSrvc))
