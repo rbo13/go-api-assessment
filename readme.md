@@ -93,6 +93,11 @@ $ migrate -path db/migrations -database ${DATABASE_URL} up
 $ make migrate
 ```
 
+## Run the tests:
+```bash
+go test -v -race ./...
+```
+
 ## Finally, run the project via `go run`:
 
 ```bash
@@ -102,5 +107,6 @@ go run ./cmd/api/root.go ./cmd/api/main.go
 ## Check application:
 
 ---
+If all is well, a message like this should be seen:
 
-### The app server should now be running on: localhost:3000
+![image](https://github.com/rbo13/go-api-assessment/assets/10726631/465bf0b1-4bc9-411a-a3c7-cd0f474bfe29)
