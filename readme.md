@@ -109,4 +109,4 @@ go run ./cmd/api/root.go ./cmd/api/main.go
 ---
 If all is well, a message like this should be seen:
 
-![image](https://github.com/rbo13/go-api-assessment/assets/10726631/465bf0b1-4bc9-411a-a3c7-cd0f474bfe29)
+![image](https://github.com/rbo13/go-api-assessment/assets/10726631/1990a3bd-3c18-4062-8ec1-3927a6102d66)
