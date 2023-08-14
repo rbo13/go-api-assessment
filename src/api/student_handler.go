@@ -13,9 +13,9 @@ type registerPayload struct {
 	Students []string `json:"students"`
 }
 
-func (a *api) registerStudent(teacherSrvc service.TeacherService, studentSrvc service.StudentService, registrationSrvc service.RegistrationService) echo.HandlerFunc {
+func (a *api) RegisterStudent(teacherSrvc service.TeacherService, studentSrvc service.StudentService, registrationSrvc service.RegistrationService) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		a.logger.Sugar().Info("registerStudent:: Handler Executed")
+		a.logger.Sugar().Info("RegisterStudent:: Handler Executed")
 
 		json := map[string]interface{}{}
 

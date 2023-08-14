@@ -39,7 +39,7 @@ func (a *api) Handlers() *echo.Echo {
 
 	api.GET(apiCommonStudents, a.GetCommonStudents(teacherSrvc))
 	api.POST(apiCreateTeacher, a.createTeacher(teacherSrvc))
-	api.POST(apiRegisterStudent, a.registerStudent(teacherSrvc, studentSrvc, registrationSrvc))
+	api.POST(apiRegisterStudent, a.RegisterStudent(teacherSrvc, studentSrvc, registrationSrvc))
 	api.POST(apiSuspend, a.suspendStudent(studentSrvc))
 	api.POST(apiRetrieveNotifications, a.retrieveForNotifications(teacherSrvc, studentSrvc))
 

@@ -27,7 +27,8 @@ func (m *mockTeacherService) AddTeacher(ctx context.Context, teacher domain.Teac
 
 // RetrieveTeacherByEmail implements service.TeacherService.
 func (m *mockTeacherService) RetrieveTeacherByEmail(ctx context.Context, teacherEmail string) (domain.Teacher, error) {
-	panic("unimplemented")
+	args := m.Called(ctx, teacherEmail)
+	return args.Get(0).(domain.Teacher), args.Error(1)
 }
 
 func (m *mockTeacherService) RetrieveCommonStudents(ctx context.Context, teachersEmail []string) ([]string, error) {
@@ -46,6 +47,7 @@ func TestTeacherHandler(t *testing.T) {
 	defer db.Close()
 
 	teacherService := new(mockTeacherService)
+	testAPI := api.New(context.Background(), logger, db)
 
 	t.Run("Should GET common Students by a given Teacher", func(t *testing.T) {
 		teacherService.
@@ -58,8 +60,6 @@ func TestTeacherHandler(t *testing.T) {
 		c := e.NewContext(req, rec)
 		c.SetPath("/api/v1/commonstudents")
 		c.Set("teacherSrvc", teacherService)
-
-		testAPI := api.New(context.Background(), logger, db)
 
 		handler := testAPI.GetCommonStudents(teacherService)
 		assert.NoError(t, handler(c))
@@ -81,8 +81,6 @@ func TestTeacherHandler(t *testing.T) {
 		c := e.NewContext(req, rec)
 		c.SetPath("/api/v1/commonstudents")
 		c.Set("teacherSrvc", teacherService)
-
-		testAPI := api.New(context.Background(), logger, db)
 
 		handler := testAPI.GetCommonStudents(teacherService)
 		assert.NoError(t, handler(c))
