@@ -11,7 +11,7 @@ import (
 
 const (
 	JSONErrUnexpectedJSONFormat = "Unexpected JSON Payload Format. Please check"
-	APIVersion                  = "v1.0.4"
+	APIVersion                  = "v1.0.5"
 )
 
 func (a *api) Handlers() *echo.Echo {
