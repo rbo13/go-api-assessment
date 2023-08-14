@@ -21,7 +21,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://3.0.101.227/api/v1/register",
+					"raw": "http://3.0.101.227/api/register",
 					"protocol": "http",
 					"host": [
 						"3",
@@ -31,7 +31,6 @@
 					],
 					"path": [
 						"api",
-						"v1",
 						"register"
 					]
 				}
@@ -44,7 +43,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://3.0.101.227/api/v1/commonstudents?teacher=teacherken@gmail.com&teacher=teacherjoe@gmail.com",
+					"raw": "http://3.0.101.227/api/commonstudents?teacher=teacherken@gmail.com&teacher=teacherjoe@gmail.com",
 					"protocol": "http",
 					"host": [
 						"3",
@@ -54,7 +53,6 @@
 					],
 					"path": [
 						"api",
-						"v1",
 						"commonstudents"
 					],
 					"query": [
@@ -86,7 +84,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://3.0.101.227/api/v1/teachers",
+					"raw": "http://3.0.101.227/api/teachers",
 					"protocol": "http",
 					"host": [
 						"3",
@@ -96,7 +94,6 @@
 					],
 					"path": [
 						"api",
-						"v1",
 						"teachers"
 					]
 				}
@@ -118,7 +115,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://3.0.101.227/api/v1/suspend",
+					"raw": "http://3.0.101.227/api/suspend",
 					"protocol": "http",
 					"host": [
 						"3",
@@ -128,7 +125,6 @@
 					],
 					"path": [
 						"api",
-						"v1",
 						"suspend"
 					]
 				}
@@ -150,7 +146,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://3.0.101.227/api/v1/retrievefornotifications",
+					"raw": "http://3.0.101.227/api/retrievefornotifications",
 					"protocol": "http",
 					"host": [
 						"3",
@@ -160,7 +156,6 @@
 					],
 					"path": [
 						"api",
-						"v1",
 						"retrievefornotifications"
 					]
 				}
