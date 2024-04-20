@@ -2,8 +2,6 @@
 
 This is the official repository of my Go API Assessment.
 
-Live URL: http://3.0.101.227
-
 ## Tech stack:
 
 1.  [Go](https://go.dev) with version `1.20` - Backend Language.
